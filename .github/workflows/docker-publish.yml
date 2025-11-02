@@ -48,4 +48,4 @@ jobs:
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/publishing:latest
 
       - name: Push Image to GitHub Container Registry
-        run: docker push ghcr.io/${{ github.actor }}/publishing:latest
+        run: docker push ghcr.io/${{ secrets.GITHUBUSERNAME }}/publishing:latest
