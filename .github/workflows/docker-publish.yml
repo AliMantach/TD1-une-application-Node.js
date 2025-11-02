@@ -31,7 +31,7 @@ jobs:
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/publishing:latest \
-            -t ghcr.io/${{ github.repository_owner }}/publishing:latest .
+            -t ghcr.io/${{ secrets.GITHUBUSERNAME }}/publishing:latest .
 
       - name: Login to Docker Hub
         env:
@@ -48,4 +48,4 @@ jobs:
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/publishing:latest
 
       - name: Push Image to GitHub Container Registry
-        run: docker push ghcr.io/${{ github.repository_owner }}/publishing:latest
+        run: docker push ghcr.io/${{ secrets.GITHUBUSERNAME }}/publishing:latest
