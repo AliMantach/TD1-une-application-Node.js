@@ -13,7 +13,7 @@ jobs:
 
     steps:
       # Récupérer le code
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       # Connexion à Docker Hub
