@@ -22,7 +22,7 @@ jobs:
           node-version: '20.15.1'
 
       - name: Install dependencies
-        run: npm ci 
+        run: npm ci
 
       - name: Run tests
         run: npm test
@@ -38,7 +38,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" 
+            echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}"
 
       - name: Login to GitHub Container Registry
         run: |
