@@ -3,10 +3,7 @@ name: Publish Docker Image
 on:
     push:
         branches:
-        - main  
-    pull_request:
-        branches:
-        - main    
+        - main      
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -39,7 +36,11 @@ jobs:
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:latest
 
       # Publier sur GitHub Container Registry
-      - name: Push to GitHub Container Registry
+      - name: Tag Docker image
         run: |
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:latest ghcr.io/${{ secrets.GITHUBUSERNAME}}/my-node-app:latest
-          docker push ghcr.io/${{ github.GITHUBUSERNAME }}/my-node-app:latest
+         docker tag ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:latest ghcr.io/${{ secrets.GITHUBUSERNAME }}/my-node-app:latest
+
+      - name: Push Docker image to GHCR
+        run: |
+         docker push ghcr.io/${{ secrets.GITHUBUSERNAME }}/my-node-app:latest
+
