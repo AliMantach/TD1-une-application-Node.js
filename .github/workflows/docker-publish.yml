@@ -8,6 +8,9 @@ on:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write  # Required for GHCR
 
     steps:
       - name: Checkout Repository
@@ -28,7 +31,7 @@ jobs:
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/publishing:latest \
-            -t ghcr.io/${{ secrets.GITHUBUSERNAME }}/publishing:latest .
+            -t ghcr.io/${{ github.repository_owner }}/publishing:latest .
 
       - name: Login to Docker Hub
         env:
@@ -38,14 +41,11 @@ jobs:
           echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 
       - name: Login to GitHub Container Registry
-        env:
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GHCR_USERNAME: ${{ secrets.GITHUBUSERNAME}}
         run: |
-          echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push Image to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/publishing:latest
 
       - name: Push Image to GitHub Container Registry
-        run: docker push ghcr.io/${{ secrets.GITHUBUSERNAME }}/publishing:latest
+        run: docker push ghcr.io/${{ github.repository_owner }}/publishing:latest
