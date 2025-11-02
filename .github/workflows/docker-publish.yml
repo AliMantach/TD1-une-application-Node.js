@@ -1,46 +1,51 @@
 name: Publish Docker Image
 
 on:
-    push:
-        branches:
-        - main      
+  push:
+    branches:
+      - main
+
 jobs:
-  build-and-push:
+  build-and-publish:
     runs-on: ubuntu-latest
+
     steps:
-      # Récupérer le code
-      - name: Checkout repo
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Connexion à Docker Hub
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.15.1'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/publishing:latest \
+            -t ghcr.io/${{ secrets.GITHUBUSERNAME }}/publishing:latest .
+
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 
-      # Connexion à GitHub Container Registry
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # Construire l'image Docker
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:latest .
-
-      # Publier sur Docker Hub
-      - name: Push to Docker Hub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:latest
-
-      # Publier sur GitHub Container Registry
-      - name: Tag Docker image
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USERNAME: ${{ secrets.GITHUBUSERNAME}}
         run: |
-         docker tag ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:latest ghcr.io/${{ secrets.GITHUBUSERNAME }}/my-node-app:latest
+          echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
 
-      - name: Push Docker image to GHCR
-        run: |
-         docker push ghcr.io/${{ secrets.GITHUBUSERNAME }}/my-node-app:latest
+      - name: Push Image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/publishing:latest
 
+      - name: Push Image to GitHub Container Registry
+        run: docker push ghcr.io/${{ secrets.GITHUBUSERNAME }}/publishing:latest
