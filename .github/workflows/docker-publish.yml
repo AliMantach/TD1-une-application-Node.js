@@ -1,16 +1,15 @@
 name: Publish Docker Image
 
 on:
-  workflow_run:
-    workflows: ["Node.js CI"]
-    types:
-      - completed
-
+    push:
+        branches:
+        - main  
+    pull_request:
+        branches:
+        - main    
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
     steps:
       # Récupérer le code
       - name: Checkout repository
@@ -42,5 +41,5 @@ jobs:
       # Publier sur GitHub Container Registry
       - name: Push to GitHub Container Registry
         run: |
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:latest ghcr.io/${{ github.GITHUBUSERNAME  }}/my-node-app:latest
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:latest ghcr.io/${{ secrets.GITHUBUSERNAME}}/my-node-app:latest
           docker push ghcr.io/${{ github.GITHUBUSERNAME }}/my-node-app:latest
