@@ -13,7 +13,7 @@ jobs:
 
     steps:
       # Récupérer le code
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       # Connexion à Docker Hub
@@ -42,5 +42,5 @@ jobs:
       # Publier sur GitHub Container Registry
       - name: Push to GitHub Container Registry
         run: |
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:latest ghcr.io/${{ github.repository_owner }}/my-node-app:latest
-          docker push ghcr.io/${{ github.repository_owner }}/my-node-app:latest
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:latest ghcr.io/$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')/my-node-app:latest
+          docker push ghcr.io/$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')/my-node-app:latest
