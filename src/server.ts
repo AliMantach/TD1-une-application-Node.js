@@ -14,7 +14,7 @@ const handleRequest = async (req: IncomingMessage, res: ServerResponse): Promise
 
   // Route: /api/v1/sysinfo
   if (req.method === 'GET' && req.url?.startsWith('/api/v1/sysinfo')) {
-    console.log('Request received for system info at Azure');
+    console.log('Request received for system info at Azure (td4)');
     try {
       const systemInfo = await getSystemInfo();
       res.writeHead(200, { 'Content-Type': 'text/plain' });
