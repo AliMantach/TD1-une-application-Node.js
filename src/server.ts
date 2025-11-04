@@ -2,7 +2,7 @@ import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { helloWorld } from './hello-world';
 import { getSystemInfo } from './sysinfo';
 
-const PORT = 8000;
+const PORT = 80;
 
 const handleRequest = async (req: IncomingMessage, res: ServerResponse): Promise<void> => {
   // Route: /
